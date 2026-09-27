@@ -5,7 +5,7 @@ let checked = false;
 
 const tasks = [
   {
-    type:'drag', title:'Распредели вещества по классам',
+    type:'drag', title:'Распредели вещества по классам', shuffle:true,
     items:['Fe','Al','S','P','CuO','SO₃','NaOH','Fe(OH)₃','H₂SO₄','HCl','HNO₃','H₃PO₄','K₂CO₃','CaCl₂','Na₂SO₄','Cu(NO₃)₂'],
     zones:['Металлы','Неметаллы','Оксиды','Основания','Кислоты','Соли'],
     answer:{'Fe':'Металлы','Al':'Металлы','S':'Неметаллы','P':'Неметаллы','CuO':'Оксиды','SO₃':'Оксиды','NaOH':'Основания','Fe(OH)₃':'Основания','H₂SO₄':'Кислоты','HCl':'Кислоты','HNO₃':'Кислоты','H₃PO₄':'Кислоты','K₂CO₃':'Соли','CaCl₂':'Соли','Na₂SO₄':'Соли','Cu(NO₃)₂':'Соли'}
@@ -96,7 +96,9 @@ function setFeedback(ok,msg=''){ const f=document.getElementById('feedback'); f.
 function lock(){ app.querySelectorAll('input,select,button.chip,.match-item').forEach(el=>{if(el.tagName==='INPUT'||el.tagName==='SELECT')el.disabled=true; else el.style.pointerEvents='none'}); }
 function normalize(s){return s.trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' ').replace(/\s*\(\s*/g,'(').replace(/\s*\)\s*/g,')')}
 
-function renderDrag(t,b){ b.innerHTML=`<div class="chips-bank" id="bank"></div><div class="drop-grid ${t.cols?'cols-4':''}">${t.zones.map(z=>`<div class="drop-zone" data-zone="${z}"><h3>${z}</h3><div class="zone-items"></div></div>`).join('')}</div>`; const bank=b.querySelector('#bank'); t.items.forEach(it=>bank.appendChild(makeChip(it))); b.querySelectorAll('.drop-zone').forEach(z=>{z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('dragover')});z.addEventListener('dragleave',()=>z.classList.remove('dragover'));z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('dragover');const id=e.dataTransfer.getData('text/plain');const c=document.querySelector(`[data-item-id="${CSS.escape(id)}"]`); if(c)z.querySelector('.zone-items').appendChild(c)});z.onclick=e=>{const s=document.querySelector('.chip.selected');if(s&&!e.target.closest('.chip')){z.querySelector('.zone-items').appendChild(s);s.classList.remove('selected')}}}); bank.onclick=e=>{const s=e.target.closest('.chip'); if(s&&s.parentElement!==bank){bank.appendChild(s);s.classList.remove('selected')}} }
+function shuffleArray(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function renderDrag(t,b){ b.innerHTML=`<div class="chips-bank" id="bank"></div><div class="drop-grid ${t.cols?'cols-4':''}">${t.zones.map(z=>`<div class="drop-zone" data-zone="${z}"><h3>${z}</h3><div class="zone-items"></div></div>`).join('')}</div>`; const bank=b.querySelector('#bank'); const items=t.shuffle?shuffleArray(t.items):t.items; items.forEach(it=>bank.appendChild(makeChip(it))); b.querySelectorAll('.drop-zone').forEach(z=>{z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('dragover')});z.addEventListener('dragleave',()=>z.classList.remove('dragover'));z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('dragover');const id=e.dataTransfer.getData('text/plain');const c=document.querySelector(`[data-item-id="${CSS.escape(id)}"]`); if(c)z.querySelector('.zone-items').appendChild(c)});z.onclick=e=>{const s=document.querySelector('.chip.selected');if(s&&!e.target.closest('.chip')){z.querySelector('.zone-items').appendChild(s);s.classList.remove('selected')}}}); bank.onclick=e=>{const s=e.target.closest('.chip'); if(s&&s.parentElement!==bank){bank.appendChild(s);s.classList.remove('selected')}} }
 function makeChip(text){const c=document.createElement('button');c.className='chip';c.type='button';c.textContent=text;c.draggable=true;c.dataset.itemId=text;c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',text));c.onclick=e=>{e.stopPropagation();document.querySelectorAll('.chip.selected').forEach(x=>x!==c&&x.classList.remove('selected'));c.classList.toggle('selected')};return c}
 function checkDrag(t){let ok=true; document.querySelectorAll('.chip').forEach(c=>{const z=c.closest('.drop-zone')?.dataset.zone; const good=z===t.answer[c.dataset.itemId]; c.classList.add(good?'correct':'incorrect'); if(!good)ok=false}); if(document.querySelector('#bank .chip'))ok=false; return ok}
 
@@ -129,7 +131,119 @@ function checkConfig(t){let ok=true;bq('[data-ci]').forEach(inp=>{const good=nor
 function renderIdentify(t,b){b.innerHTML=`<div class="config-list">${t.rows.map((r,i)=>`<div class="config-row"><div class="formula-label">${r[0]}</div><input class="text-input" data-ii="${i}" placeholder="Символ или название элемента" autocomplete="off"></div>`).join('')}</div>`}
 function checkIdentify(t){let ok=true;bq('[data-ii]').forEach(inp=>{const r=t.rows[+inp.dataset.ii];const good=[r[1],r[2]].map(normalize).includes(normalize(inp.value));mark(inp,good);if(!good)ok=false});return ok}
 
-function checkCurrent(t){if(checked)return;checked=true;const checks={drag:checkDrag,atomTable:checkAtomTable,atomScheme:checkAtomScheme,oxidationInputs:checkOx,matching:checkMatching,naming:checkNaming,levels:checkLevels,config:checkConfig,identifyConfig:checkIdentify};const ok=checks[t.type](t);if(ok)score++;lock();let msg='';if(!ok){if(t.type==='atomTable')msg='Есть ошибки. Для нейтрального атома p = e, а число нейтронов n = A − Z.';else if(t.type==='atomScheme')msg='Период показывает число электронных слоёв, а для элементов главных подгрупп номер группы связан с числом электронов на внешнем уровне.';else if(t.type==='oxidationInputs')msg='Есть ошибки. Помни: сумма степеней окисления в нейтральном веществе равна 0.';else if(t.type==='naming')msg='Есть ошибки. Проверь класс вещества и, где нужно, укажи валентность римской цифрой.';else if(t.type==='levels')msg='Есть ошибки. Заполняй уровни от внутреннего к внешнему.';else if(t.type==='config'||t.type==='identifyConfig')msg='Есть ошибки. Проверь порядок заполнения орбиталей и общее число электронов.';}
-setFeedback(ok,msg)}
+
+function esc(s){return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]))}
+function signed(n){return n>0?'+'+n:String(n).replace('-','−')}
+function zoneWhy(taskIndex,zone,item){
+  if(taskIndex===0){
+    const m={
+      'Металлы':'это простое вещество, состоящее из атомов металла.',
+      'Неметаллы':'это простое вещество, состоящее из атомов неметалла.',
+      'Оксиды':'это сложное вещество из двух элементов, один из которых кислород.',
+      'Основания':'в составе есть атом металла и гидроксогруппа OH.',
+      'Кислоты':'формула содержит атомы водорода и кислотный остаток.',
+      'Соли':'вещество состоит из катиона металла и кислотного остатка.'};return m[zone]||'';
+  }
+  if(taskIndex===1){const m={'Основные':'оксид металла с основными свойствами.','Кислотные':'оксид проявляет кислотные свойства и соответствует кислоте.','Амфотерные':'оксид реагирует и с кислотами, и со щелочами.','Несолеобразующие':'оксид не образует соответствующую соль при обычных кислотно-основных реакциях.'};return m[zone]||''}
+  if(taskIndex===2){const m={'Ионная':'связь возникает между ионами, обычно в соединении металла с неметаллом.','Ковалентная полярная':'общая электронная пара смещена к более электроотрицательному атому.','Ковалентная неполярная':'электронная пара распределена практически равномерно между одинаковыми или близкими по электроотрицательности атомами.','Металлическая':'это простое вещество-металл с металлической связью.'};return m[zone]||''}
+  if(taskIndex===3){const m={'Ионная':'в узлах решётки находятся ионы.','Молекулярная':'в узлах решётки находятся молекулы.','Атомная':'в узлах решётки находятся атомы, связанные прочными ковалентными связями.','Металлическая':'в узлах решётки находятся положительные ионы металла, между ними — обобществлённые электроны.'};return m[zone]||''}
+  return '';
+}
+function namingWhy(formula){
+  if(/^H/.test(formula) && !formula.includes('OH')) return 'это кислота, поэтому используется традиционное название кислоты.';
+  if(formula.includes('(OH)')) return 'это основание: называем «гидроксид» и металл; для металла переменной валентности указываем её.';
+  if(/O/.test(formula) && !/[()]/.test(formula) && !formula.includes('NO₃') && !formula.includes('SO₄') && !formula.includes('CO₃')) return 'это оксид: называем «оксид» и элемент; при переменной валентности указываем её.';
+  return 'это соль: называем кислотный остаток, затем металл; при переменной валентности металла указываем её.';
+}
+function oxidationWhy(formula, element, value){
+  const special={
+    'H₂S':{'H':'H обычно имеет +1.','S':'2·(+1) + x = 0, поэтому S = −2.'},
+    'Na₂O':{'Na':'O = −2, поэтому 2x − 2 = 0 и Na = +1.','O':'в большинстве оксидов кислород имеет −2.'},
+    'HNO₃':{'H':'в кислотах H обычно +1.','N':'(+1) + x + 3·(−2) = 0, поэтому N = +5.','O':'кислород здесь имеет −2.'},
+    'Fe₂O₃':{'Fe':'2x + 3·(−2) = 0, поэтому Fe = +3.','O':'в обычных оксидах O = −2.'},
+    'Ca(OH)₂':{'Ca':'две группы OH имеют суммарный заряд −2, поэтому Ca = +2.','O':'в гидроксогруппе O = −2.','H':'в гидроксогруппе H = +1.'},
+    'K₂SO₄':{'K':'щелочной металл K всегда имеет +1.','S':'2·(+1) + x + 4·(−2) = 0, поэтому S = +6.','O':'кислород в сульфате имеет −2.'}
+  };
+  return special[formula]?.[element] || `сумма степеней окисления в нейтральном веществе равна 0, поэтому ${element} = ${signed(value)}.`;
+}
+function matchingWhy(i){
+  const reasons={
+    0:'в NH₃ водород имеет +1: x + 3·(+1) = 0, поэтому N = −3.',
+    1:'в H₂S водород имеет +1: 2·(+1) + x = 0, поэтому S = −2.',
+    2:'H₂O₂ — пероксид, поэтому кислород имеет исключительную степень окисления −1.',
+    3:'Cl₂ — простое вещество, поэтому степень окисления Cl равна 0.',
+    4:'в Cu₂O кислород −2: 2x − 2 = 0, поэтому Cu = +1.',
+    5:'в Fe₂O₃ кислород −2: 2x + 3·(−2) = 0, поэтому Fe = +3.',
+    6:'в HNO₃ H = +1, O = −2: 1 + x − 6 = 0, поэтому N = +5.',
+    7:'в HClO₄ H = +1, O = −2: 1 + x − 8 = 0, поэтому Cl = +7.'
+  };
+  return reasons[i] || 'степень окисления находится из условия, что сумма степеней окисления в нейтральной частице равна 0.';
+}
+function levelWhy(levelIndex, answer){
+  if(levelIndex===0)return `первый энергетический уровень вмещает максимум 2 электрона, здесь на нём ${answer}.`;
+  return `электроны распределяются от внутренних уровней к внешним; на ${levelIndex+1}-м уровне должно быть ${answer}.`;
+}
+function detailedFeedback(t){
+  const lines=[];
+  if(t.type==='drag'){
+    bq('.chip.incorrect').forEach(c=>{
+      const item=c.dataset.itemId, correct=t.answer[item];
+      lines.push(`<b>${esc(item)} → ${esc(correct)}</b>: ${esc(zoneWhy(current,correct,item))}`);
+    });
+  } else if(t.type==='atomTable'){
+    bq('.small-input.incorrect').forEach(inp=>{
+      const r=t.rows[+inp.dataset.r],c=+inp.dataset.c;
+      const labels=['','p⁺','n⁰','e⁻'];
+      let why='';
+      if(c===1)why=`порядковый номер Z = ${r[1]}, поэтому протонов ${r[1]}.`;
+      if(c===2)why=`n = A − Z = ${r[1]+r[2]} − ${r[1]} = ${r[2]}.`;
+      if(c===3)why=`атом нейтральный, поэтому число электронов равно числу протонов: ${r[3]}.`;
+      lines.push(`<b>${r[0]}: ${labels[c]} = ${r[c]}</b>: ${why}`);
+    });
+  } else if(t.type==='atomScheme'){
+    bq('.choice-group select.incorrect').forEach(sel=>{
+      const a=t.atoms[+sel.dataset.ai];
+      if(sel.dataset.k==='group') lines.push(`<b>Группа = ${a.group}</b>: на внешнем уровне ${a.group} электрон(а/ов); для элементов главных подгрупп это соответствует номеру группы.`);
+      else lines.push(`<b>Период = ${a.period}</b>: на схеме видно ${a.period} электронных уровня, а число уровней равно номеру периода.`);
+    });
+  } else if(t.type==='oxidationInputs'){
+    bq('.ox-input.incorrect').forEach(inp=>{
+      const f=t.formulas[+inp.dataset.fi],tok=f.tokens[+inp.dataset.ti];
+      const formula=f.display||f.tokens.map(x=>x[0]+(x[1]||'')).join('');
+      lines.push(`<b>${formula}: ${tok[0]} = ${signed(tok[2])}</b>: ${oxidationWhy(formula,tok[0],tok[2])}`);
+    });
+  } else if(t.type==='matching'){
+    t.left.forEach((x,i)=>{
+      const el=document.querySelector(`[data-li="${i}"]`);
+      if(el?.classList.contains('incorrect')) lines.push(`<b>${x[0]}: ${x[1]} = ${t.answer[i]}</b>: ${matchingWhy(i)}`);
+    });
+  } else if(t.type==='naming'){
+    bq('[data-ni].incorrect').forEach(inp=>{
+      const r=t.rows[+inp.dataset.ni],answer=r[1][0];
+      lines.push(`<b>${r[0]} — ${answer}</b>: ${namingWhy(r[0])}`);
+    });
+  } else if(t.type==='levels'){
+    bq('[data-lr].incorrect').forEach(inp=>{
+      const ri=+inp.dataset.lr, li=+inp.dataset.lc, r=t.rows[ri],ans=r[2][li];
+      lines.push(`<b>${r[0]}, ${li+1}-й уровень = ${ans}</b>: ${levelWhy(li,ans)}`);
+    });
+  } else if(t.type==='config'){
+    bq('[data-ci].incorrect').forEach(inp=>{
+      const r=t.rows[+inp.dataset.ci];
+      const total=(r[1].match(/\d+$/g)||[]);
+      lines.push(`<b>${r[0]}: ${r[1]}</b>: орбитали заполняются по возрастанию энергии; сумма электронов в записи должна равняться порядковому номеру атома ${r[0]}.`);
+    });
+  } else if(t.type==='identifyConfig'){
+    bq('[data-ii].incorrect').forEach(inp=>{
+      const r=t.rows[+inp.dataset.ii];
+      lines.push(`<b>${r[0]} → ${r[1]} (${r[2]})</b>: элемент определяется по общему числу электронов в конфигурации.`);
+    });
+  }
+  if(!lines.length)return 'Есть ошибки. Посмотри правильные ответы.';
+  return `<b>Разбор ошибок:</b><div class="feedback-details">${lines.map(x=>`<div class="feedback-line">${x}</div>`).join('')}</div>`;
+}
+
+function checkCurrent(t){if(checked)return;checked=true;const checks={drag:checkDrag,atomTable:checkAtomTable,atomScheme:checkAtomScheme,oxidationInputs:checkOx,matching:checkMatching,naming:checkNaming,levels:checkLevels,config:checkConfig,identifyConfig:checkIdentify};const ok=checks[t.type](t);if(ok)score++;lock();setFeedback(ok,ok?'':detailedFeedback(t))}
+
 function renderFinal(){app.innerHTML=`<section class="screen-card final-screen"><div class="eyebrow">Результат</div><div class="score">${score} из ${tasks.length}</div><p>${score===tasks.length?'Отлично! Все задания выполнены верно.':'Хорошая база. Стоит повторить темы, где были ошибки.'}</p><button class="primary-btn" id="again">Пройти ещё раз</button></section>`;document.getElementById('again').onclick=start}
 renderStart();

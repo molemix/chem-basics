@@ -58,3 +58,6 @@ h1{font-size:clamp(32px,5vw,58px);max-width:760px;line-height:1.02;letter-spacin
 @media (max-width:480px){.drop-grid,.drop-grid.cols-4{grid-template-columns:1fr}.match-area{gap:18px}.formula-tokens{font-size:26px;gap:14px}.formula-token{min-width:48px;padding-top:40px}.atom-svg{width:210px}}
 
 .formula-bracket{font-weight:800;line-height:1}.formula-bracket.prefix{margin-right:1px}.formula-bracket.suffix{margin-left:1px}
+.feedback-details{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.feedback-line{padding-top:10px;border-top:1px solid rgba(94,59,154,.12);line-height:1.5}
+.feedback-line:first-child{border-top:0;padding-top:0}
