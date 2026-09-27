@@ -21,7 +21,7 @@ html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-ap
 body{min-height:100vh}
 button,input{font:inherit}
 button{cursor:pointer}
-.topbar{height:88px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,54px);position:sticky;top:0;background:rgba(252,248,239,.92);backdrop-filter:blur(14px);z-index:20;border-bottom:1px solid rgba(226,212,239,.9);overflow:hidden}
+.topbar{height:88px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,54px);position:sticky;top:0;background:rgba(251,244,251,.94);backdrop-filter:blur(14px);z-index:20;border-bottom:1px solid rgba(226,212,239,.9);overflow:hidden}
 .telegram{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid var(--line);box-shadow:0 8px 22px rgba(66,33,98,.08);transition:.2s}
 .telegram:hover{transform:translateY(-2px)}
 .telegram svg{width:21px;height:21px;fill:var(--accent-dark)}
