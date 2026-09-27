@@ -43,7 +43,7 @@ const tasks = [
       {tokens:[['Na','₂',1],['O','',-2]]},
       {tokens:[['H','',1],['N','',5],['O','₃',-2]]},
       {tokens:[['Fe','₂',3],['O','₃',-2]]},
-      {tokens:[['Ca','',2],['O','',-2],['H','₂',1]], display:'Ca(OH)₂'},
+      {tokens:[['Ca','',2],['O','',-2,'('],['H','',1,'',')₂']], display:'Ca(OH)₂'},
       {tokens:[['K','₂',1],['S','',6],['O','₄',-2]]}
     ]
   },
@@ -109,7 +109,7 @@ function renderAtomScheme(t,b){b.innerHTML=`<div class="atom-grid">${t.atoms.map
 function atomSvg(levels){const cx=120,cy=120,radii=[38,68,98];let s=`<svg class="atom-svg" viewBox="0 0 240 240" aria-label="Схема атома"><circle class="nucleus" cx="120" cy="120" r="18"/>`;levels.forEach((count,li)=>{const r=radii[li];s+=`<circle class="shell" cx="120" cy="120" r="${r}"/>`;for(let j=0;j<count;j++){const ang=(-90+(360/count)*j)*Math.PI/180;const x=cx+r*Math.cos(ang),y=cy+r*Math.sin(ang);s+=`<circle class="electron" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2"/>`}});return s+'</svg>'}
 function checkAtomScheme(t){let ok=true;bq('.choice-group select').forEach(sel=>{const a=t.atoms[+sel.dataset.ai];const good=Number(sel.value)===a[sel.dataset.k];mark(sel,good);if(!good)ok=false});return ok}
 
-function renderOx(t,b){b.innerHTML=`<div class="ox-grid">${t.formulas.map((f,fi)=>`<div class="ox-card"><div class="formula-tokens">${f.tokens.map((tok,ti)=>`<span class="formula-token"><input class="ox-input" data-fi="${fi}" data-ti="${ti}" aria-label="Степень окисления ${tok[0]}"><span>${tok[0]}</span>${tok[1]?`<span class="sub">${tok[1]}</span>`:''}</span>`).join('')}</div></div>`).join('')}</div>`}
+function renderOx(t,b){b.innerHTML=`<div class="ox-grid">${t.formulas.map((f,fi)=>`<div class="ox-card"><div class="formula-tokens">${f.tokens.map((tok,ti)=>`<span class="formula-token"><input class="ox-input" data-fi="${fi}" data-ti="${ti}" aria-label="Степень окисления ${tok[0]}">${tok[3]?`<span class="formula-bracket prefix">${tok[3]}</span>`:''}<span>${tok[0]}</span>${tok[1]?`<span class="sub">${tok[1]}</span>`:''}${tok[4]?`<span class="formula-bracket suffix">${tok[4]}</span>`:''}</span>`).join('')}</div></div>`).join('')}</div>`}
 function parseOx(v){return Number(v.trim().replace('−','-').replace('+',''))}
 function checkOx(t){let ok=true;bq('.ox-input').forEach(inp=>{const ans=t.formulas[+inp.dataset.fi].tokens[+inp.dataset.ti][2];const good=parseOx(inp.value)===ans;mark(inp,good);if(!good)ok=false});return ok}
 

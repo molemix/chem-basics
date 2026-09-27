@@ -56,3 +56,5 @@ h1{font-size:clamp(32px,5vw,58px);max-width:760px;line-height:1.02;letter-spacin
   .topbar{height:74px;padding:0 16px}.brand-logo{width:52px!important;height:52px!important;max-width:52px!important;max-height:52px!important}.app{width:min(100% - 18px,1180px);padding-top:18px}.task-shell{padding:18px 14px}.drop-grid,.drop-grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.drop-zone{min-height:110px;padding:10px}.chip{padding:10px 11px;font-size:14px}.atom-grid,.ox-grid,.level-grid{grid-template-columns:1fr}.match-area{gap:34px}.match-item{font-size:14px;padding:10px}.name-row,.config-row{grid-template-columns:1fr;gap:8px}.formula-label{font-size:18px}.task-actions>*{flex:1}.entry-table td{padding:10px 6px}.small-input{width:60px}.task-title{margin-bottom:18px}.start-screen{min-height:calc(100vh - 124px)}
 }
 @media (max-width:480px){.drop-grid,.drop-grid.cols-4{grid-template-columns:1fr}.match-area{gap:18px}.formula-tokens{font-size:26px;gap:14px}.formula-token{min-width:48px;padding-top:40px}.atom-svg{width:210px}}
+
+.formula-bracket{font-weight:800;line-height:1}.formula-bracket.prefix{margin-right:1px}.formula-bracket.suffix{margin-left:1px}
