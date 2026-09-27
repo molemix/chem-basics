@@ -18,12 +18,12 @@ html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-ap
 body{min-height:100vh}
 button,input{font:inherit}
 button{cursor:pointer}
-.topbar{height:88px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,54px);position:sticky;top:0;background:rgba(252,248,239,.92);backdrop-filter:blur(14px);z-index:20;border-bottom:1px solid rgba(232,226,214,.85)}
+.topbar{height:88px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4vw,54px);position:sticky;top:0;background:rgba(252,248,239,.92);backdrop-filter:blur(14px);z-index:20;border-bottom:1px solid rgba(232,226,214,.85);overflow:hidden}
 .telegram{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid var(--line);box-shadow:0 8px 22px rgba(0,0,0,.04);transition:.2s}
 .telegram:hover{transform:translateY(-2px)}
 .telegram svg{width:21px;height:21px;fill:#253025}
-.brand{display:flex;align-items:center;justify-content:flex-end;min-width:150px}
-.brand-logo{display:block;height:62px;width:auto;object-fit:contain}
+.brand{display:flex;align-items:center;justify-content:flex-end;width:78px;height:64px;overflow:hidden;flex:0 0 auto}
+.brand-logo{display:block!important;width:64px!important;height:64px!important;max-width:64px!important;max-height:64px!important;object-fit:contain!important;object-position:center!important}
 .app{width:min(1180px,calc(100% - 28px));margin:0 auto;padding:28px 0 56px}
 .screen-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
 .start-screen{min-height:calc(100vh - 160px);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:44px 22px}
@@ -49,6 +49,6 @@ h1{font-size:clamp(32px,5vw,58px);max-width:760px;line-height:1.02;letter-spacin
 .level-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.level-card{border:1px solid var(--line);background:#fafbf8;border-radius:18px;padding:16px}.level-card strong{font-size:20px}.levels-inputs{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.levels-inputs input{width:58px}.separator{align-self:center;color:var(--muted);font-weight:700}
 .final-screen{text-align:center;padding:50px 24px}.score{font-size:clamp(54px,10vw,104px);font-weight:900;letter-spacing:-.06em;margin:18px 0}.final-screen p{color:var(--muted);font-size:18px}
 @media (max-width:760px){
-  .topbar{height:74px;padding:0 16px}.brand-logo{height:48px}.app{width:min(100% - 18px,1180px);padding-top:18px}.task-shell{padding:18px 14px}.drop-grid,.drop-grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.drop-zone{min-height:110px;padding:10px}.chip{padding:10px 11px;font-size:14px}.atom-grid,.ox-grid,.level-grid{grid-template-columns:1fr}.match-area{gap:34px}.match-item{font-size:14px;padding:10px}.name-row,.config-row{grid-template-columns:1fr;gap:8px}.formula-label{font-size:18px}.task-actions>*{flex:1}.entry-table td{padding:10px 6px}.small-input{width:60px}.task-title{margin-bottom:18px}.start-screen{min-height:calc(100vh - 124px)}
+  .topbar{height:74px;padding:0 16px}.brand-logo{width:52px!important;height:52px!important;max-width:52px!important;max-height:52px!important}.app{width:min(100% - 18px,1180px);padding-top:18px}.task-shell{padding:18px 14px}.drop-grid,.drop-grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.drop-zone{min-height:110px;padding:10px}.chip{padding:10px 11px;font-size:14px}.atom-grid,.ox-grid,.level-grid{grid-template-columns:1fr}.match-area{gap:34px}.match-item{font-size:14px;padding:10px}.name-row,.config-row{grid-template-columns:1fr;gap:8px}.formula-label{font-size:18px}.task-actions>*{flex:1}.entry-table td{padding:10px 6px}.small-input{width:60px}.task-title{margin-bottom:18px}.start-screen{min-height:calc(100vh - 124px)}
 }
 @media (max-width:480px){.drop-grid,.drop-grid.cols-4{grid-template-columns:1fr}.match-area{gap:18px}.formula-tokens{font-size:26px;gap:14px}.formula-token{min-width:48px;padding-top:40px}.atom-svg{width:210px}}
